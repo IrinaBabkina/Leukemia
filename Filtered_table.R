@@ -8,11 +8,9 @@ need_collumns<-c(2:17,19,24, 25,51,52,54:64,72,83)
 first_filter<- raw_data[,need_collumns]
 
 #Переназовем отобранные колонки (иначе так замучаемся.. )####
-name_col_eng<-c("Num_TKM","Surname","Name","Gender","Born","Growth","Weight","Diagn_date","Age_diagn","Phaze_do_TKM","Date_alloTKM","Age_TKM","Diagn-TKM_time","Donor_type","Restade_data","Last_contact_date","Relapse","Status_life","Data_base","Gratwohl","Gratwohl_group","Donor_age","Donor_gender","Consistency","Sourse_transp","ABO_patient","ABO_donor","ABO_consist","CD34","CD34>3","CMV","Condition","ATG","GVHD")
+name_col_eng<-c("Num_TKM","Surname","Name","Gender","Born","Growth","Weight","Diagn_date","Age_diagn","Phaze_do_TKM","Date_alloTKM","Age_TKM","Diagn-TKM_period(days)","Donor_type","Restade_data","Last_contact_date","Relapse","Status_life","Data_base","Gratwohl","Gratwohl_group","Donor_age","Donor_gender","Consistency","Sourse_transp","ABO_patient","ABO_donor","ABO_consist","CD34","CD34>3","CMV","Condition","ATG","GVHD")
 colnames(first_filter)<-name_col_eng
 
-#Запишем то, что получилось в табличку csv####
-write.table(x = first_filter, file = "data/first_filtered.csv",sep = ";",row.names = FALSE)
 
 #Дальше будем работать с новой табличкой
 
@@ -50,10 +48,12 @@ library(lubridate)
 
 elapsed.time <- first_filter$Born %--% first_filter$Diagn_date
 age<-round(as.duration(elapsed.time) / dyears(1),1)
+first_filter$Age_diagn<-age
 
 #Считаем промежуток от диагноза до ТКМ в днях####
 elapsed.time_1 <- first_filter$Diagn_date %--% first_filter$Date_alloTKM
 Diagn_TKM <- round(as.duration(elapsed.time_1) / ddays(1))
+first_filter$`Diagn-TKM_period(days)`<-Diagn_TKM
 
 #Считаем промежуток от ТКМ до момента обновления базы. 
 
@@ -80,4 +80,17 @@ surv_data$TKM_group <- factor(surv_data$TKM_group)
 
 km_fit <- survfit(Surv(time_life, status==1) ~ TKM_group, data=surv_data)
 summary(km_fit, times = c(1,30,60,90*(1:10)))
-ggsurvplot(km_fit, data = surv_data, pval = TRUE)
+ggsurvplot(km_fit, data = surv_data, size = 1,  # change line size
+           linetype = "strata", # change line type by groups
+           palette = c("#E7B800", "#2E9FDF"), # custom color palette
+           conf.int = TRUE, # Add confidence interval
+           pval = TRUE, # Add p-value
+           legend = "bottom", 
+           legend.title = "Period from diagnosis to TKM",
+           legend.labs = c("More median", "Less median"))
+
+#Запишем то, что получилось в  first_filter в табличку csv####
+write.table(x = first_filter, file = "data/first_filtered.csv",sep = ";",row.names = FALSE)
+
+#если я ничего важного в нее не забыла положить, то дальше будем работать только с ней
+
