@@ -37,11 +37,6 @@ length(unique(ident))# 104 уникальных пациента (по имен�
 first_filter[duplicated(ident),]#. Не уникальные. С повторной ТКМ 11 человек
 first_filter$ident<-ident
 
-#отберем только тех, у кого ТМК была 1 раз
-single_TMK<-filter(first_filter, Num_TKM==1)
-length(unique(single_TMK$ident))
-nrow(single_TMK)# таких 102 человека
-# я так поняла, что разница между 104 уникальных и 102 с первой ТКМ потому, что 2м первую ТКМ делали не в Горбачевке, а вторую в ней
 
 #Считаем возраст на момент диагноза (в годах)####
 library(lubridate)
@@ -56,7 +51,6 @@ Diagn_TKM <- round(as.duration(elapsed.time_1) / ddays(1))
 first_filter$`Diagn-TKM_period(days)`<-Diagn_TKM
 
 #Считаем промежуток от ТКМ до момента обновления базы. 
-
 elapsed.time_2 <- first_filter$Date_alloTKM %--% first_filter$Data_base
 TKM_base <- round(as.duration(elapsed.time_2) / ddays(1))
 
@@ -64,10 +58,21 @@ TKM_base <- round(as.duration(elapsed.time_2) / ddays(1))
 library(survival)
 library(survminer)
 
+
+
+
 #Соберем это в один дата фрейм для удобства
 surv_data<-data_frame(status=first_filter$Status_life, 
                       time_life=TKM_base,
-                      time_TKM=Diagn_TKM)
+                      time_TKM=Diagn_TKM,
+                      phase_do_TKM=first_filter$Phaze_do_TKM,
+                      n_TKM=first_filter$Num_TKM)
+
+#отберем тех, у кого ТКМ была 1 раз
+surv_data<-filter(surv_data, n_TKM==1)
+# таких 102 человека
+# я так поняла, что разница между 104 уникальных и 102 с первой ТКМ потому, что 2м первую ТКМ делали не в Горбачевке, а вторую в ней
+
 #Уберем наблюдения с NA
 surv_data<-surv_data[complete.cases(surv_data),]
 
@@ -97,8 +102,11 @@ ggsurvplot(km_fit_1, data = surv_data, size = 1,
            conf.int = TRUE, # Add confidence interval 
            legend.title = "Patients",
            legend = c(0.1, 0.2),
-           xlab = "Time in days")$plot +ggtitle("Kaplan-Meier survival curve")+theme(legend.text = element_text(size = 14, color = "black"),legend.title = element_text(size = 14, color = "black"))
+           xlab = "Time after TKM in days")$plot +ggtitle("Kaplan-Meier survival curve")+theme(legend.text = element_text(size = 14, color = "black"),legend.title = element_text(size = 14, color = "black"))
 
+km_fit_3 <- survfit(Surv(time_life, status==1) ~ phase_do_TKM, data=surv_data)
+summary(km_fit_3)
+ggsurvplot(km_fit_3, data = surv_data,pval = T, conf.int = T)
 #Запишем то, что получилось в  first_filter в табличку csv####
 #write.table(x = first_filter, file = "data/first_filtered.csv",sep = ";",row.names = FALSE)
 
