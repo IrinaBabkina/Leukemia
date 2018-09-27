@@ -77,7 +77,7 @@ surv_data$TKM_group <- factor(surv_data$TKM_group)
 
 #Нам нужно рассчитать общую выживаемость в зависимости от времени до ТКМ
 # status==1 принципиальная вещь, которая стоила мне пару часов жизни)) Инвертирует то, что у врачей живой обозначен 0, а мертвый 1
-
+# График по фактору "время от диагноза до ТКМ" по медиане
 km_fit <- survfit(Surv(time_life, status==1) ~ TKM_group, data=surv_data)
 summary(km_fit, times = c(1,30,60,90*(1:10)))
 ggsurvplot(km_fit, data = surv_data, size = 1,  # change line size
@@ -89,8 +89,18 @@ ggsurvplot(km_fit, data = surv_data, size = 1,  # change line size
            legend.title = "Period from diagnosis to TKM",
            legend.labs = c("More median", "Less median"))
 
+km_fit_1 <- survfit(Surv(time_life, status==1) ~ 1, data=surv_data)
+summary(km_fit_1, times = c(1,30,60,90*(1:10)))
+ggsurvplot(km_fit_1, data = surv_data, size = 1,  
+           linetype = "strata", # change line type by groups
+           palette = c("#fd0166"), # custom color palette
+           conf.int = TRUE, # Add confidence interval 
+           legend.title = "Patients",
+           legend = c(0.1, 0.2),
+           xlab = "Time in days")$plot +ggtitle("Kaplan-Meier survival curve")+theme(legend.text = element_text(size = 14, color = "black"),legend.title = element_text(size = 14, color = "black"))
+
 #Запишем то, что получилось в  first_filter в табличку csv####
-write.table(x = first_filter, file = "data/first_filtered.csv",sep = ";",row.names = FALSE)
+#write.table(x = first_filter, file = "data/first_filtered.csv",sep = ";",row.names = FALSE)
 
 #если я ничего важного в нее не забыла положить, то дальше будем работать только с ней
 
