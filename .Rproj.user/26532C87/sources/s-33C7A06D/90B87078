@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1538031613019.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2424277874",
+    "id" : "90B87078",
+    "lastKnownWriteTime" : 1538031656,
+    "last_content_update" : 1538031656740,
+    "path" : "~/IB/Leukemia/Full_survival.R",
+    "project_path" : "Full_survival.R",
+    "properties" : {
+        "cursorPosition" : "7,18",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
