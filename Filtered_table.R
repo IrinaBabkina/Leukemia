@@ -54,6 +54,12 @@ first_filter$`Diagn-TKM_period(days)`<-Diagn_TKM
 elapsed.time_2 <- first_filter$Date_alloTKM %--% first_filter$Data_base
 TKM_base <- round(as.duration(elapsed.time_2) / ddays(1))
 
+#посчитаем у кого ТКМ была единственный раз
+double<-filter(first_filter, Num_TKM==2)$ident #имена дублей
+#only_one <- first_filter[!first_filter$ident %in% double, ]#таблица без дублей
+
+first_filter$Only_one_TKM <- ifelse(first_filter$ident %in% double==T,"no","yes")#запишем значение в таблицу
+
 #Можно начинать возиться с выживаемостью))####
 library(survival)
 library(survminer)
@@ -66,13 +72,10 @@ surv_data<-data_frame(status=first_filter$Status_life,
                       time_life=TKM_base,
                       time_TKM=Diagn_TKM,
                       phase_do_TKM=first_filter$Phaze_do_TKM,
-                      n_TKM=first_filter$Num_TKM)
+                      n_TKM=first_filter$Only_one_TKM)
 
 #отберем тех, у кого ТКМ была 1 раз
-surv_data<-filter(surv_data, n_TKM==1)
-# таких 102 человека
-# я так поняла, что разница между 104 уникальных и 102 с первой ТКМ потому, что 2м первую ТКМ делали не в Горбачевке, а вторую в ней
-
+surv_data<-filter(surv_data, n_TKM=="yes")
 #Уберем наблюдения с NA
 surv_data<-surv_data[complete.cases(surv_data),]
 
