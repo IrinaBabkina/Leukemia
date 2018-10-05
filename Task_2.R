@@ -33,9 +33,26 @@ surv_data$TKM_group <- factor(surv_data$TKM_group)
 
 #Нам нужно рассчитать общую выживаемость в зависимости от времени до ТКМ
 # status==1 принципиальная вещь, которая стоила мне пару часов жизни)) Инвертирует то, что у врачей живой обозначен 0, а мертвый 1
+
+#Функция для рассчета координат "хвостика". На вход модель, на выход координаты.
+
+fin_cum<-function(km_fit){
+  if (length(km_fit$n)==1) {
+    list(round(km_fit$surv[length(km_fit$surv)],3),
+         max(km_fit$time))
+  } else {
+    s_f<-summary(km_fit)
+    strata <- names(km_fit$strata)
+    sapply(strata, function(x){data.frame(cum = round(min(km_fit$surv[s_f$strata==x]),3),
+                                          nr = max(km_fit$time[s_f$strata==x]))})
+  }
+}
+
 # График по фактору "время от диагноза до ТКМ" по 12
 km_fit <- survfit(Surv(time_life, status==1) ~ TKM_group, data=surv_data)
 summary(km_fit, times = c(1,30,60,90*(1:10)))
+
+text<-fin_cum(km_fit)
 
 ggsurvplot(km_fit, data = surv_data, size = 1,  # change line size
            linetype = "strata", # change line type by groups
@@ -47,11 +64,14 @@ ggsurvplot(km_fit, data = surv_data, size = 1,  # change line size
            legend.title = "Период от диагностики до TKM",
            legend.labs = c("Больше 12 месяцев", "Меньше 12 месяцев"))$plot+
   scale_x_continuous("Время после TKM (мес)",breaks = seq(0, 300, 24)) +
-  scale_y_continuous("Кумулятивная доля выживших",breaks = seq(0, 1, 0.1))
+  scale_y_continuous("Кумулятивная доля выживших",breaks = seq(0, 1, 0.1))+
+  annotate("text", x = text[[4]]-20, y = text[[1]]+0.1, label = paste(text[[1]]*100,"%"))+
+  annotate("text", x = text[[2]], y = text[[3]], label = paste(text[[3]]*100,"%"))#штуки в двойных квадратных скобках это коэфициенты, которые отвечают за положение "хвостика". Берутся из того листа, который возвращает функция fin_cum 
 
+#График для общей выживаемости. 
 
 km_fit_1 <- survfit(Surv(time_life, status==1) ~ 1, data=surv_data)
-proz<-round(km_fit_1$surv[length(km_fit_1$surv)],3)
+text<-fin_cum(km_fit_1)
 
 ggsurvplot(km_fit_1, data = surv_data, size = 1,  
            linetype = "strata", # change line type by groups
@@ -61,7 +81,6 @@ ggsurvplot(km_fit_1, data = surv_data, size = 1,
            legend = c(0.1, 0.2),
            xlab = "Время после TKM (мес)")$plot +ggtitle("Кривая выживаемости Каплана-Майера")+theme(legend.text = element_text(size = 14, color = "black"),legend.title = element_text(size = 14, color = "black"))+scale_x_continuous(breaks = seq(0, 300, 24)) +
   scale_y_continuous("Кумулятивная доля выживших",breaks = seq(0, 1, 0.1))+
-  annotate("text", x = max(surv_data$time_life)+20, y = proz, label = paste(proz*100,"%"))
-
+  annotate("text", x = text[[2]]-20, y = text[[1]]+0.1, label = paste(text[[1]]*100,"%"))#штуки в двойных квадратных скобках это коэфициенты, которые отвечают за положение "хвостика". Берутся из того листа, который возвращает функция fin_cum 
 
 
