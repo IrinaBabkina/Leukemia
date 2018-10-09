@@ -1,0 +1,20 @@
+first_filter<-read.csv("data/first_filtered.csv", sep=";")
+
+#прелюдия, которая делает табличку человекочитаемой) Но ее нужно каждый раз делать
+first_filter[-c(5:9,11,12,13,15:16,19,22,29)] <- lapply( first_filter[-c(5:9,11,12,13,15:16,19,22,29)], factor) 
+levels(first_filter$Gender)<-c("male","female","ono")
+levels(first_filter$Donor_type)<- c("UR","R")
+levels(first_filter$Relapse)<-c("no","yes")
+levels(first_filter$Status_life)<-c("life", "died")
+levels(first_filter$Donor_gender)<-c("male", "female")
+levels(first_filter$Consistency)<-c("full", "particular","haplo")
+levels(first_filter$Sourse_transp)<-c("periferia", "bond")
+levels(first_filter$ABO_consist)
+levels(first_filter$CD34.3)<-c(">3","<3")
+levels(first_filter$CMV)<-c("not inf","d-r-","d+r-", "d+r-(G)","d-r+","d+r+", "d-r+(G)","d-r+(G)")
+levels(first_filter$ATG)<-c("no","yes")
+levels(first_filter$GVHD) <-c("no reaction","reaction")
+levels(first_filter$ABO_patient)
+first_filter[c(5,8,11,15,16,19)] <- lapply( first_filter[c(5,8,11,15,16,19)], as.POSIXct) 
+
+write.table(first_filter, file = "table.csv", row.names = F)
