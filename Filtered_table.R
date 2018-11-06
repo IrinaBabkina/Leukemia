@@ -5,8 +5,8 @@ library(lubridate)
 
 #Загрузим сырые данные от Жени и Оксаны#####
 raw_data <- read_excel(path = "data/db_31_10_2018.xls")
-write.table(x = raw_data, file = "data/raw_data.csv",sep = " ",row.names = FALSE)
-raw_data <- read.csv("data/raw_data.csv", sep=" ")
+write.table(x = raw_data, file = "data/raw_data.csv",sep = ";",row.names = FALSE)
+raw_data <- read.csv("data/raw_data.csv", sep=";")
 
 #Отберем те колонки, которые нам интересны
 need_collumns<-c(2:18, 20:26, 52:65,72:74,76,81, 84, 88:89, 91:93, 122:125, 130)
@@ -32,11 +32,11 @@ head(third_filter)
 str(third_filter)
 
 # Факторы в факторы. Не факторы оставляем####
-third_filter[-c(5:9, 12:14, 16:17, 20:22, 24, 27:28, 35, 43, 45, 49, 52:53)] <- 
-  lapply( third_filter[-c(5:9, 12:14, 16:17, 20:22, 24, 27:28, 35, 43, 45, 49, 52:53)], factor) 
+third_filter[-c(5:9, 12:14, 16:17, 20:22, 24, 27:28, 35, 43, 46, 49, 52:53)] <- 
+  lapply( third_filter[-c(5:9, 12:14, 16:17, 20:22, 24, 27:28, 35, 43, 46, 49, 52:53)], factor) 
 
-third_filter[c(5,8:9,12,16:17,20:22, 24, 45, 49, 52:53)] <- 
-  lapply(third_filter[c(5,8:9,12,16:17,20:22, 24, 45, 49, 52:53)], as.Date) 
+third_filter[c(5,8:9,12,16:17,20:22, 24, 46, 49, 52:53)] <- 
+  lapply(third_filter[c(5,8:9,12,16:17,20:22, 24, 46, 49, 52:53)], as.Date) 
 
 #прелюдия, которая делает табличку человекочитаемой) Но ее нужно каждый раз делать
 levels(third_filter$Gender)<-c("male","female")
