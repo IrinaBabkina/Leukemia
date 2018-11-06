@@ -35,8 +35,8 @@ str(third_filter)
 third_filter[-c(5:9, 12:14, 16:17, 20:22, 24, 27:28, 35, 43, 46, 49, 52:53)] <- 
   lapply( third_filter[-c(5:9, 12:14, 16:17, 20:22, 24, 27:28, 35, 43, 46, 49, 52:53)], factor) 
 
-third_filter[c(5,8:9,12,16:17,20:22, 24, 46, 49, 52:53)] <- 
-  lapply(third_filter[c(5,8:9,12,16:17,20:22, 24, 46, 49, 52:53)], as.Date) 
+third_filter[c(5,8,12,16:17,20:22, 24, 46, 49, 52:53)] <- 
+  lapply(third_filter[c(5,8,12,16:17,20:22, 24, 46, 49, 52:53)], as.Date) 
 
 #прелюдия, которая делает табличку человекочитаемой) Но ее нужно каждый раз делать
 levels(third_filter$Gender)<-c("male","female")
@@ -82,13 +82,13 @@ str(third_filter)
 ##################### ТОЛЬКО УНИКАЛЬНЫЕ
 
 #отберем только тех, у кого ТМК была 1 раз
-double<-filter(third_filter, Num_TKM==2)$ident #имена людей, у кого было несколько ТКМ
+#double<-filter(third_filter, Num_TKM==2)$ident #имена людей, у кого было несколько ТКМ
 
 #запишем новую колонку в таблицу, которая будет маркировать людей с единственной ТКМ
-third_filter$Only_one_TKM <- ifelse(third_filter$ident %in% double==T,"no","yes")
+#third_filter$Only_one_TKM <- ifelse(third_filter$ident %in% double==T,"no","yes")
 
 #Оставим только уникальных пациентов
-third_filter <- subset(third_filter, third_filter$Only_one_TKM == 'yes')
+#third_filter <- subset(third_filter, third_filter$Only_one_TKM == 'yes')
 
 ##################### УНИКАЛЬНЫЕ С ОДНОЙ И ПОВТОРНОЙ ТКМ
 
