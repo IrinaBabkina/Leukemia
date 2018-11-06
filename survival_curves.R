@@ -4,7 +4,10 @@ library(ggplot2)
 library(survival)
 library(survminer)
 
-third_filter <- read.csv("data/third_filtered.csv", header = T, sep = ";")
+third_filter <- read.table("data/third_filtered.csv", header = T, sep = ";")
+
+third_filter[c(5,8,12,16:17,20:22, 24, 46, 49, 52:53, 57, 59, 61)] <- 
+  lapply(third_filter[c(5,8,12,16:17,20:22, 24, 46, 49, 52:53, 57, 59, 61)], as.POSIXct) 
 
 #Исключаем пациентов с ХФ1
 third_filter <- third_filter[third_filter$Phaze_do_TKM != "CP_1",]
@@ -115,7 +118,7 @@ ggsurvplot(km_fit_aGVHD, data = surv_data_GVHD, size = 1,
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
 
-# Бессобытийная выживаемость
+# Безрецидивная выживаемость
 km_fit_aGVHD_ev <- survfit(Surv(time_event, event == 'yes') ~ aGVHD, data=surv_data_GVHD)
 ggsurvplot(km_fit_aGVHD_ev, data = surv_data_GVHD, size = 1,  
            linetype = "strata", # change line type by groups
@@ -151,7 +154,7 @@ ggsurvplot(km_fit_сGVHD, data = surv_data_GVHD, size = 1,
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
 
-# Бессобытийная выживаемость
+# Безрецидивная выживаемость
 km_fit_cGVHD_ev <- survfit(Surv(time_event, event == 'yes') ~ cGVHD, data=surv_data_GVHD)
 ggsurvplot(km_fit_cGVHD_ev, data = surv_data_GVHD, size = 1,  
            linetype = "strata", # change line type by groups
