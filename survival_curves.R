@@ -28,7 +28,7 @@ km_fit <- survfit(Surv(time_life, status=='died') ~ TKM_group, data=surv_data)
 ggsurvplot(km_fit, data = surv_data, size = 1,  
            linetype = "strata", # change line type by groups
            #palette = c("#fd0166"), # custom color palette
-           conf.int = TRUE, # Add confidence interval 
+           #conf.int = TRUE, # Add confidence interval 
            pval = TRUE,
            legend.title = "Время от диагноза до ТКМ",
            legend.labs = c("> 12 мес", "< 12 мес"),
@@ -36,9 +36,8 @@ ggsurvplot(km_fit, data = surv_data, size = 1,
            break.x.by = 24,
            xlim = c(0,120),
            legend = c(0.2, 0.1),
-           ylab = "Кумулятивная выживаемость",
-           xlab = "Время после TKM (мес)")$plot +
-  ggtitle("Кривая выживаемости Каплана-Майера")+
+           ylab = "Общая выживаемость",
+           xlab = "Время после TKM (мес)")$plot+
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
 
@@ -47,7 +46,7 @@ km_fit_mac_ric <- survfit(Surv(time_life, status=='died') ~ mac_ric, data=surv_d
 ggsurvplot(km_fit_mac_ric, data = surv_data, size = 1,  
            linetype = "strata", # change line type by groups
            #palette = c("#fd0166"), # custom color palette
-           conf.int = TRUE, # Add confidence interval 
+           #conf.int = TRUE, # Add confidence interval 
            pval = TRUE,
            legend.title = "MAC / RIC",
            legend.labs = c("MAC", "RIC"),
@@ -55,35 +54,27 @@ ggsurvplot(km_fit_mac_ric, data = surv_data, size = 1,
            break.x.by = 24,
            xlim = c(0,120),
            legend = c(0.1, 0.1),
-           ylab = "Кумулятивная выживаемость",
-           xlab = "Время после TKM (мес)")$plot +
-  ggtitle("Кривая выживаемости Каплана-Майера")+
+           ylab = "Общая выживаемость",
+           xlab = "Время после TKM (мес)")$plot+
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
 
 
 #################### Совместимость - полная/частичная/гапло.
-surv_consis <- third_filter[third_filter$Consistency != "haplo",]
-surv_consis$Consistency <- factor(surv_consis$Consistency, levels = c("full", "particular"))
-surv_data_cons <- data_frame(status = surv_consis$Status_life, 
-                        time_life = surv_consis$TKM_death/30.5,
-                        consistency = surv_consis$Consistency)
-str(surv_consis)
-km_fit_consis <- survfit(Surv(time_life, status=='died') ~ consistency, data=surv_data_cons)
-ggsurvplot(km_fit_consis, data = surv_data_cons, size = 1,  
+km_fit_consis <- survfit(Surv(time_life, status=='died') ~ consistency, data=surv_data)
+ggsurvplot(km_fit_consis, data = surv_data, size = 1,  
            linetype = "strata", # change line type by groups
            #palette = c("#fd0166"), # custom color palette
-           conf.int = TRUE, # Add confidence interval
+           #conf.int = TRUE, # Add confidence interval
            pval = TRUE,
            legend.title = "Совместимость",
-           legend.labs = c("Полная", "Частичная"),
+           legend.labs = c("Полная", "Частичная", "Гапло"),
            break.y.by = 0.1,
            break.x.by = 24,
            xlim = c(0,120),
-           legend = c(0.1, 0.1),
-           ylab = "Кумулятивная выживаемость",
-           xlab = "Время после TKM (мес)")$plot +
-  ggtitle("Кривая выживаемости Каплана-Майера")+
+           legend = c(0.2, 0.1),
+           ylab = "Общая выживаемость",
+           xlab = "Время после TKM (мес)")$plot+
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
 
@@ -111,7 +102,7 @@ km_fit_aGVHD <- survfit(Surv(time_life, status=='died') ~ aGVHD, data=surv_data_
 ggsurvplot(km_fit_aGVHD, data = surv_data_GVHD, size = 1,  
            linetype = "strata", # change line type by groups
            #palette = c("#fd0166"), # custom color palette
-           conf.int = TRUE, # Add confidence interval
+           #conf.int = TRUE, # Add confidence interval
            pval = TRUE,
            legend.title = "острая РТПХ",
            legend.labs = c("1-2 стадии", "3-4 стадии", "нет оРТПХ"),
@@ -119,9 +110,8 @@ ggsurvplot(km_fit_aGVHD, data = surv_data_GVHD, size = 1,
            break.x.by = 24,
            xlim = c(0,120),
            legend = c(0.8, 0.8),
-           ylab = "Кумулятивная выживаемость",
-           xlab = "Время после TKM (мес)")$plot +
-  ggtitle("Кривая выживаемости Каплана-Майера")+
+           ylab = "Общая выживаемость",
+           xlab = "Время после TKM (мес)")$plot+
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
 
@@ -130,7 +120,7 @@ km_fit_aGVHD_ev <- survfit(Surv(time_event, event == 'yes') ~ aGVHD, data=surv_d
 ggsurvplot(km_fit_aGVHD_ev, data = surv_data_GVHD, size = 1,  
            linetype = "strata", # change line type by groups
            #palette = c("#fd0166"), # custom color palette
-           conf.int = TRUE, # Add confidence interval
+           #conf.int = TRUE, # Add confidence interval
            pval = TRUE,
            legend.title = "острая РТПХ",
            legend.labs = c("1-2 стадии", "3-4 стадии", "нет оРТПХ"),
@@ -138,9 +128,8 @@ ggsurvplot(km_fit_aGVHD_ev, data = surv_data_GVHD, size = 1,
            break.x.by = 24,
            xlim = c(0,120),
            legend = c(0.8, 0.8),
-           ylab = "Бессобытийная выживаемость",
-           xlab = "Время после TKM (мес)")$plot +
-  ggtitle("Кривая выживаемости Каплана-Майера")+
+           ylab = "Безрецидивная выживаемость",
+           xlab = "Время после TKM (мес)")$plot+
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
 
@@ -149,7 +138,7 @@ km_fit_сGVHD <- survfit(Surv(time_life, status=='died') ~ cGVHD, data=surv_data
 ggsurvplot(km_fit_сGVHD, data = surv_data_GVHD, size = 1,  
            linetype = "strata", # change line type by groups
            #palette = c("#fd0166"), # custom color palette
-           conf.int = TRUE, # Add confidence interval
+           #conf.int = TRUE, # Add confidence interval
            pval = TRUE,
            legend.title = "хроническая РТПХ",
            legend.labs = c("1-2 стадии", "3-4 стадии", "нет хРТПХ"),
@@ -157,9 +146,8 @@ ggsurvplot(km_fit_сGVHD, data = surv_data_GVHD, size = 1,
            break.x.by = 24,
            xlim = c(0,120),
            legend = c(0.9, 0.2),
-           ylab = "Кумулятивная выживаемость",
-           xlab = "Время после TKM (мес)")$plot +
-  ggtitle("Кривая выживаемости Каплана-Майера")+
+           ylab = "Общая выживаемость",
+           xlab = "Время после TKM (мес)")$plot+
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
 
@@ -168,7 +156,7 @@ km_fit_cGVHD_ev <- survfit(Surv(time_event, event == 'yes') ~ cGVHD, data=surv_d
 ggsurvplot(km_fit_cGVHD_ev, data = surv_data_GVHD, size = 1,  
            linetype = "strata", # change line type by groups
            #palette = c("#fd0166"), # custom color palette
-           conf.int = TRUE, # Add confidence interval
+           #conf.int = TRUE, # Add confidence interval
            pval = TRUE,
            legend.title = "хроническая РТПХ",
            legend.labs = c("1-2 стадии", "3-4 стадии", "нет хРТПХ"),
@@ -176,9 +164,8 @@ ggsurvplot(km_fit_cGVHD_ev, data = surv_data_GVHD, size = 1,
            break.x.by = 24,
            xlim = c(0,120),
            legend = c(0.8, 0.8),
-           ylab = "Бессобытийная выживаемость",
-           xlab = "Время после TKM (мес)")$plot +
-  ggtitle("Кривая выживаемости Каплана-Майера")+
+           ylab = "Безрецидивная выживаемость",
+           xlab = "Время после TKM (мес)")$plot+
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
 
@@ -187,7 +174,7 @@ km_fit_cy <- survfit(Surv(time_life, status=='died') ~ Cy, data=surv_data_GVHD)
 ggsurvplot(km_fit_cy, data = surv_data_GVHD, size = 1,  
            linetype = "strata", # change line type by groups
            #palette = c("#fd0166"), # custom color palette
-           conf.int = TRUE, # Add confidence interval
+           #conf.int = TRUE, # Add confidence interval
            pval = TRUE,
            legend.title = "Наличие циклофосфана",
            legend.labs = c("Нет", "Есть"),
@@ -195,9 +182,7 @@ ggsurvplot(km_fit_cy, data = surv_data_GVHD, size = 1,
            break.x.by = 24,
            xlim = c(0,120),
            legend = c(0.8, 0.8),
-           ylab = "Кумулятивная выживаемость",
-           xlab = "Время после TKM (мес)")$plot +
-  ggtitle("Кривая выживаемости Каплана-Майера")+
+           ylab = "Общая выживаемость",
+           xlab = "Время после TKM (мес)")$plot+
   theme(legend.text = element_text(size = 14, color = "black"),
         legend.title = element_text(size = 14, color = "black"))
-
