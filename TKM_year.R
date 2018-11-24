@@ -63,8 +63,8 @@ surv_data1 <-data_frame(status=data1$Status_life,
 
 #Переведем время ТКМ в фактор
 surv_data1 <- surv_data1 %>% mutate(TKM_date_factor = ifelse(as.numeric(data1$Date_alloTKM) < as.numeric(as.POSIXct('2006-01-01')),
-                                                           "2006", ifelse(as.numeric(data1$Date_alloTKM) >= as.numeric(as.POSIXct('2012-01-01')),
-                                                                          "2012", "2006-2012")))
+                                                           "2006", ifelse(as.numeric(data1$Date_alloTKM) >= as.numeric(as.POSIXct('2013-01-01')),
+                                                                          "2013", "2006-2012")))
 surv_data1$TKM_date_factor <- factor(surv_data1$TKM_date_factor)
 
 # График по фактору "время от диагноза до ТКМ" по 12
@@ -94,4 +94,4 @@ ggsurvplot(km_fit1, data = surv_data1, size = 1,  # change line size
            font.tickslab=c(16,"plain"),
            break.x.by = 24,
            legend.title = "Дата проведения ТКМ",
-           legend.labs = c("до 2006 года", "с 2006 по 2012 год", "с 2012 года"))$plot
+           legend.labs = c("до 2005 года", "с 2006 по 2012 год", "с 2013 года по наст. вр."))$plot
